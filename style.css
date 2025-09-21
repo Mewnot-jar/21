@@ -6,6 +6,8 @@
   --accent:#ff4d7e;
   --card:#ffffffd9;
   --shadow: 0 10px 30px rgba(31,41,55,.15);
+  --plot-width: clamp(72px, 24vw, 120px);
+  --plot-height: calc(var(--plot-width) * 4 / 3);
 }
 
 *{box-sizing:border-box}
@@ -19,7 +21,9 @@ body{
 }
 
 .bg{
-  position:fixed; inset:0; pointer-events:none;
+  position:fixed;
+  inset:0;
+  pointer-events:none;
   background-image: radial-gradient(ellipse at 10% -10%, rgba(255,77,126,.14) 0 40%, transparent 41%),
                     radial-gradient(ellipse at 90% 10%, rgba(99,102,241,.12) 0 35%, transparent 36%),
                     radial-gradient(ellipse at 50% 120%, rgba(16,185,129,.10) 0 30%, transparent 31%);
@@ -27,131 +31,291 @@ body{
 }
 
 .hero{
-  padding:48px 16px 2px;
+  padding:48px 16px 8px;
   text-align:center;
 }
 .hero h1{
-  font-family: "Dancing Script", cursive;
-  font-size: clamp(40px, 6vw, 68px);
+  font-family:"Dancing Script", cursive;
+  font-size:clamp(40px, 6vw, 68px);
   margin:0 0 8px;
   letter-spacing:.5px;
 }
 .hero p{
-  margin:0; color:var(--muted);
+  margin:0;
+  color:var(--muted);
 }
 
-main{padding: 4px 16px 48px;}
+main{padding:4px 16px 48px;}
 /* photo block removed */
 
 /* photo styles removed */
-/* Aplica la forma de corazón directamente a la imagen (Chrome-friendly) */
-.photo img{ display:none !important; }
+/* Aplica la forma de corazon directamente a la imagen (Chrome-friendly) */
+.photo img{display:none !important;}
 
 #garden{
-  max-width: 1100px;
-  margin: 4px auto 0;
+  max-width: min(1100px, 100vw - 32px);
+  margin:4px auto 0;
   display:grid;
-  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-  gap: 28px 18px;
+  grid-template-columns:repeat(auto-fit, minmax(var(--plot-width), 1fr));
+  gap:clamp(16px, 4vw, 28px) clamp(12px, 3vw, 20px);
   align-items:end;
 }
-/* Layout libre para formas (corazón/círculo) */
+/* Layout libre para formas (corazon/circulo) */
 #garden.layout-free{
-  position: relative;
-  display:block; /* anula grid */
-  width: min(1100px, 92vw);
-  aspect-ratio: 1 / 1; /* área cuadrada responsiva */
+  position:relative;
+  display:block;
+  width:min(1100px, 92vw);
+  max-width:100%;
+  aspect-ratio:1 / 1;
 }
 #garden.layout-free .plot{
   position:absolute;
-  width: 120px;
-  height: 160px;
+  width:var(--plot-width);
+  height:var(--plot-height);
   display:block;
 }
-/* Layout tipo jardín: área más panorámica y suelo */
+/* Layout tipo jardin: area mas panoramica y suelo */
 #garden.layout-garden{
-  aspect-ratio: auto;
-  height: clamp(360px, 60vh, 640px);
+  aspect-ratio:auto;
+  height:clamp(320px, 70vh, 640px);
 }
 #garden.layout-garden::after{
-  content:""; position:absolute; left:0; right:0; bottom:0; height: 26%;
-  background: linear-gradient(180deg, rgba(34,197,94,.10), rgba(34,197,94,.18));
-  filter: blur(2px) saturate(1.1);
+  content:"";
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:0;
+  height:26%;
+  background:linear-gradient(180deg, rgba(34,197,94,.10), rgba(34,197,94,.18));
+  filter:blur(2px) saturate(1.1);
   pointer-events:none;
 }
 
 .plot{
-  position:relative; height: 200px; display:flex; align-items:flex-end; justify-content:center;
+  position:relative;
+  height:calc(var(--plot-height) * 1.25);
+  display:flex;
+  align-items:flex-end;
+  justify-content:center;
 }
 
 .flower{
-  position:relative; width: 120px; height: 160px; cursor:pointer;
-  transform-origin: 50% 100%;
-  animation: bloom .9s ease-out var(--delay,0s) both;
-  transition: transform .35s cubic-bezier(.2,.7,.2,1), filter .35s ease;
+  position:relative;
+  width:100%;
+  height:100%;
+  cursor:pointer;
+  transform-origin:50% 100%;
+  animation:bloom .9s ease-out var(--delay,0s) both;
+  transition:transform .35s cubic-bezier(.2,.7,.2,1), filter .35s ease;
 }
 /* Sombra del suelo */
-.flower::before{ content:""; position:absolute; left:50%; bottom:16px; width:84px; height:14px;
-  transform: translateX(-50%) scale(1);
-  background: radial-gradient(ellipse at center, rgba(0,0,0,.18) 0 40%, rgba(0,0,0,0) 60%);
-  filter: blur(2px); opacity:.22; transition: transform .35s ease, opacity .35s ease;
+.flower::before{
+  content:"";
+  position:absolute;
+  left:50%;
+  bottom:calc(var(--plot-height) * 0.1);
+  width:calc(var(--plot-width) * 0.7);
+  height:calc(var(--plot-height) * 0.0875);
+  transform:translateX(-50%) scale(1);
+  background:radial-gradient(ellipse at center, rgba(0,0,0,.18) 0 40%, rgba(0,0,0,0) 60%);
+  filter:blur(2px);
+  opacity:.22;
+  transition:transform .35s ease, opacity .35s ease;
 }
 /* Halo suave */
-.flower::after{ content:""; position:absolute; left:50%; bottom:108px; width:120px; height:120px;
-  transform: translateX(-50%) scale(.9); opacity:0;
-  background: radial-gradient(circle, rgba(255,77,126,.18) 0 30%, rgba(255,77,126,0) 60%);
-  transition: opacity .35s ease, transform .35s ease; filter: blur(.3px);
+.flower::after{
+  content:"";
+  position:absolute;
+  left:50%;
+  bottom:calc(var(--plot-height) * 0.675);
+  width:var(--plot-width);
+  height:calc(var(--plot-width) * 0.75);
+  transform:translateX(-50%) scale(.9);
+  opacity:0;
+  background:radial-gradient(circle, rgba(255,77,126,.18) 0 30%, rgba(255,77,126,0) 60%);
+  transition:opacity .35s ease, transform .35s ease;
+  filter:blur(.3px);
 }
-.flower:hover{ transform: translateY(-6px) scale(1.06) rotate(-2deg); filter:saturate(1.08); }
-.flower:hover::before{ transform: translateX(-50%) scale(1.2); opacity:.14; }
-.flower:hover::after{ opacity:.35; transform: translateX(-50%) scale(1.05); }
+.flower:hover{
+  transform:translateY(-6px) scale(1.06) rotate(-2deg);
+  filter:saturate(1.08);
+}
+.flower:hover::before{
+  transform:translateX(-50%) scale(1.2);
+  opacity:.14;
+}
+.flower:hover::after{
+  opacity:.35;
+  transform:translateX(-50%) scale(1.05);
+}
 
 @keyframes bloom{
-  from{ transform: translateY(10px) scale(.8); opacity:0 }
-  to{ transform: translateY(0) scale(1); opacity:1 }
+  from{transform:translateY(10px) scale(.8); opacity:0}
+  to{transform:translateY(0) scale(1); opacity:1}
 }
 
-.stem{ position:absolute; left:50%; bottom:18px; width:4px; height:80px; transform:translateX(-50%);
-  background: linear-gradient(#166534, #22c55e);
-  border-radius:2px; box-shadow: 0 0 0 1px rgba(0,0,0,.02) inset;
+.stem{
+  position:absolute;
+  left:50%;
+  bottom:calc(var(--plot-height) * 0.1125);
+  width:calc(var(--plot-width) * 0.033);
+  height:calc(var(--plot-height) * 0.5);
+  transform:translateX(-50%);
+  background:linear-gradient(#166534, #22c55e);
+  border-radius:2px;
+  box-shadow:0 0 0 1px rgba(0,0,0,.02) inset;
 }
-.leaf{ position:absolute; width:18px; height:9px; background:#22c55e; bottom:60px; border-radius: 9px 9px 9px 1px; transform-origin:left center; transition: transform .35s ease; }
-.leaf--r{ left:50%; transform: translateX(6px) rotate(22deg); }
-.leaf--l{ left:calc(50% - 16px); transform: translateX(-6px) rotate(-18deg) scaleX(-1); }
-.flower:hover .leaf--r{ transform: translateX(8px) rotate(32deg); }
-.flower:hover .leaf--l{ transform: translateX(-8px) rotate(-28deg) scaleX(-1); }
+.leaf{
+  position:absolute;
+  width:calc(var(--plot-width) * 0.15);
+  height:calc(var(--plot-height) * 0.056);
+  background:#22c55e;
+  bottom:calc(var(--plot-height) * 0.375);
+  border-radius: 9px 9px 9px 1px;
+  transform-origin:left center;
+  transition:transform .35s ease;
+}
+.leaf--r{
+  left:50%;
+  transform:translateX(calc(var(--plot-width) * 0.05)) rotate(22deg);
+}
+.leaf--l{
+  left:calc(50% - var(--plot-width) * 0.133);
+  transform:translateX(calc(var(--plot-width) * -0.05)) rotate(-18deg) scaleX(-1);
+}
+.flower:hover .leaf--r{
+  transform:translateX(calc(var(--plot-width) * 0.067)) rotate(32deg);
+}
+.flower:hover .leaf--l{
+  transform:translateX(calc(var(--plot-width) * -0.067)) rotate(-28deg) scaleX(-1);
+}
 
-.flower svg{ position:absolute; left:50%; bottom:80px; transform:translateX(-50%); width:100px; height:100px; filter: drop-shadow(0 6px 10px rgba(31,41,55,.12)); transform-origin: 50% 88%; }
-.flower:hover svg{ animation: sway 2.6s ease-in-out infinite; filter: drop-shadow(0 10px 16px rgba(31,41,55,.18)); }
+.flower svg{
+  position:absolute;
+  left:50%;
+  bottom:calc(var(--plot-height) * 0.5);
+  width:calc(var(--plot-width) * 0.83);
+  height:calc(var(--plot-width) * 0.83);
+  transform:translateX(-50%);
+  filter:drop-shadow(0 6px 10px rgba(31,41,55,.12));
+  transform-origin:50% 88%;
+}
+.flower:hover svg{
+  animation:sway 2.6s ease-in-out infinite;
+  filter:drop-shadow(0 10px 16px rgba(31,41,55,.18));
+}
 
 @keyframes sway{
-  0%{ transform: translateX(-50%) rotate(-1.2deg) }
-  100%{ transform: translateX(-50%) rotate(1.2deg) }
+  0%{transform:translateX(-50%) rotate(-1.2deg)}
+  100%{transform:translateX(-50%) rotate(1.2deg)}
 }
 
 @media (prefers-reduced-motion: reduce){
-  .flower:hover{ transform: translateY(-4px) scale(1.04); }
-  .flower:hover svg{ animation: none; }
+  .flower:hover{transform:translateY(-4px) scale(1.04);}
+  .flower:hover svg{animation:none;}
 }
 
-.footer{ text-align:center; color:#9aa3b2; padding: 24px; font-size:14px; }
+.footer{
+  text-align:center;
+  color:#9aa3b2;
+  padding:24px;
+  font-size:14px;
+}
 
 /* Modal */
-.modal{ position:fixed; inset:0; display:grid; place-items:center; background:rgba(17,24,39,.32); opacity:0; pointer-events:none; transition:.2s ease; backdrop-filter:saturate(1.1) blur(2px); z-index: 9999; }
-.modal.open{ opacity:1; pointer-events:auto; }
-.modal__card{ background:var(--card); border-radius:16px; width:min(680px, 92vw); box-shadow: var(--shadow); position:relative; padding: 22px 22px 16px; }
-.modal__close{ position:absolute; top:10px; right:10px; border:none; background:transparent; font-size:26px; line-height:1; cursor:pointer; color:#6b7280; }
-.modal__content{ padding: 18px 10px 10px; }
-.modal__content p{ font-size: clamp(16px, 2.2vw, 20px); line-height:1.5; margin:0; white-space:pre-line; }
-.modal__actions{ display:flex; gap:10px; justify-content:flex-end; padding-top:10px; }
-.btn{ appearance:none; border:none; background:var(--accent); color:white; padding:10px 14px; border-radius:10px; cursor:pointer; font-weight:600; box-shadow: 0 6px 14px rgba(255,77,126,.25); }
-.btn:hover{ filter:brightness(.98); }
-.btn:active{ transform: translateY(1px); }
-.btn--ghost{ background:transparent; color:var(--accent); border:2px solid var(--accent); box-shadow:none; }
+.modal{
+  position:fixed;
+  inset:0;
+  display:grid;
+  place-items:center;
+  background:rgba(17,24,39,.32);
+  opacity:0;
+  pointer-events:none;
+  transition:.2s ease;
+  backdrop-filter:saturate(1.1) blur(2px);
+  z-index:9999;
+}
+.modal.open{
+  opacity:1;
+  pointer-events:auto;
+}
+.modal__card{
+  background:var(--card);
+  border-radius:16px;
+  width:min(680px, 92vw);
+  box-shadow:var(--shadow);
+  position:relative;
+  padding:22px 22px 16px;
+}
+.modal__close{
+  position:absolute;
+  top:10px;
+  right:10px;
+  border:none;
+  background:transparent;
+  font-size:26px;
+  line-height:1;
+  cursor:pointer;
+  color:#6b7280;
+}
+.modal__content{
+  padding:18px 10px 10px;
+}
+.modal__content p{
+  font-size:clamp(16px, 2.2vw, 20px);
+  line-height:1.5;
+  margin:0;
+  white-space:pre-line;
+}
+.modal__actions{
+  display:flex;
+  gap:10px;
+  justify-content:flex-end;
+  padding-top:10px;
+}
+.btn{
+  appearance:none;
+  border:none;
+  background:var(--accent);
+  color:white;
+  padding:10px 14px;
+  border-radius:10px;
+  cursor:pointer;
+  font-weight:600;
+  box-shadow:0 6px 14px rgba(255,77,126,.25);
+}
+.btn:hover{filter:brightness(.98);}
+.btn:active{transform:translateY(1px);}
+.btn--ghost{
+  background:transparent;
+  color:var(--accent);
+  border:2px solid var(--accent);
+  box-shadow:none;
+}
 
 /* Corazones al clic */
-.heart-burst{ position:fixed; left:0; top:0; font-size:16px; pointer-events:none; will-change: transform, opacity; }
+.heart-burst{
+  position:fixed;
+  left:0;
+  top:0;
+  font-size:16px;
+  pointer-events:none;
+  will-change:transform, opacity;
+}
 @keyframes rise{
-  from{ transform: translate(var(--x,0), var(--y,0)) scale(.8) rotate(0deg); opacity:1}
-  to{ transform: translate(calc(var(--x,0) + 0px), calc(var(--y,0) - 80px)) scale(1.4) rotate(18deg); opacity:0 }
+  from{transform:translate(var(--x,0), var(--y,0)) scale(.8) rotate(0deg); opacity:1}
+  to{transform:translate(calc(var(--x,0) + 0px), calc(var(--y,0) - 80px)) scale(1.4) rotate(18deg); opacity:0}
+}
+
+@media (max-width: 768px){
+  .hero{padding:40px 14px 4px;}
+  main{padding:0 14px 40px;}
+  .footer{padding:20px 14px;}
+  #garden.layout-free{width:min(1000px, 94vw);}
+}
+
+@media (max-width: 480px){
+  .hero{padding:32px 12px 4px;}
+  main{padding:0 12px 36px;}
+  .footer{font-size:13px;}
 }

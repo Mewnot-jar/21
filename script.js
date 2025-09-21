@@ -5,9 +5,10 @@ const CONFIG = {
   layout: 'garden' // opciones: 'garden' | 'heart' | 'circle' | 'grid'
 };
 
-// Medidas del componente flor (coinciden con CSS)
-const PLOT_W = 120; // ancho del .plot
-const PLOT_H = 160; // alto del .plot
+// Medidas base del componente flor (se sincronizan con el CSS responsive)
+let plotWidth = 120; // ancho del .plot
+let plotHeight = 160; // alto del .plot
+let resizeHandler = null;
 
 // Mensajes/recuerdos: personalízalos libremente
 const MESSAGES = [
@@ -101,6 +102,17 @@ function createPlot(message, i){
   return plot;
 }
 
+function updatePlotMetrics(garden){
+  if (!garden) return;
+  const sample = garden.querySelector('.plot');
+  if (!sample) return;
+  const rect = sample.getBoundingClientRect();
+  if (rect.width > 0 && rect.height > 0){
+    plotWidth = rect.width;
+    plotHeight = rect.height;
+  }
+}
+
 function mountGarden(){
   const titleEl = document.getElementById('title');
   const subtitleEl = document.getElementById('subtitle');
@@ -113,17 +125,26 @@ function mountGarden(){
   msgs.forEach((m, i) => garden.appendChild(createPlot(m, i)));
 
   // Aplicar layout de forma
-  garden.classList.remove('layout-garden');
-  if (CONFIG.layout === 'grid'){
-    garden.classList.remove('layout-free');
-  } else {
+  garden.classList.remove('layout-garden', 'layout-free');
+  if (resizeHandler){
+    window.removeEventListener('resize', resizeHandler);
+    resizeHandler = null;
+  }
+
+  if (CONFIG.layout !== 'grid'){
     garden.classList.add('layout-free');
     if (CONFIG.layout === 'garden') garden.classList.add('layout-garden');
+    updatePlotMetrics(garden);
     positionFlowers(garden, CONFIG.layout);
-    // Reposicionar al redimensionar
-    window.addEventListener('resize', () => positionFlowers(garden, CONFIG.layout));
+
+    resizeHandler = () => {
+      updatePlotMetrics(garden);
+      positionFlowers(garden, CONFIG.layout);
+    };
+    window.addEventListener('resize', resizeHandler);
   }
-}
+  }
+
 
 // Modal simple
 const modal = {
@@ -266,7 +287,7 @@ function positionFlowers(garden, mode){
     plots.forEach((plot, i) => {
       const {left, baseY} = pixels[i];
       plot.style.left = left + 'px';
-      plot.style.top = (baseY - PLOT_H) + 'px';
+      plot.style.top = (baseY - plotHeight) + 'px';
       const yNorm = baseY / H;
       plot.style.zIndex = String(Math.floor(yNorm * 1000));
     });
@@ -280,7 +301,7 @@ function positionFlowers(garden, mode){
     const px = x * W;
     const py = y * H;
     plot.style.left = px + 'px';
-    plot.style.top = (py - PLOT_H) + 'px';
+    plot.style.top = (py - plotHeight) + 'px';
     plot.style.zIndex = String(Math.floor(y * 1000));
   });
 }
@@ -290,7 +311,7 @@ function gardenPixelPositions(n, W, H){
   const marginX = 32; // margen lateral
   const groundY = H * 0.90; // referencia del suelo
   const usableW = Math.max(0, W - marginX * 2);
-  const minStepX = PLOT_W + 24; // separación mínima horizontal (px)
+  const minStepX = plotWidth + 24; // separación mínima horizontal (px)
   const maxPerRow = Math.max(1, Math.floor(usableW / minStepX) + 1);
 
   // Número de filas necesarias (sin límite superior)
@@ -307,7 +328,7 @@ function gardenPixelPositions(n, W, H){
   }
 
   // Alturas: de 0.90 hacia arriba, manteniendo separación vertical mínima
-  const minStepY = 84; // px entre filas
+  const minStepY = Math.max(48, Math.round(plotHeight * 0.525)); // px entre filas
   const totalSpanY = Math.max(minStepY * (rows - 1), 1);
   const topStart = groundY - totalSpanY; // px de la fila superior
 
@@ -316,8 +337,8 @@ function gardenPixelPositions(n, W, H){
   for (let r = 0; r < rows; r++){
     const k = counts[r];
     if (k <= 0) continue;
-    const xStart = marginX + PLOT_W/2;
-    const xEnd = W - marginX - PLOT_W/2;
+    const xStart = marginX + plotWidth/2;
+    const xEnd = W - marginX - plotWidth/2;
     const span = Math.max(0, xEnd - xStart);
     const baseY = Math.round(topStart + r * minStepY);
     for (let j = 0; j < k; j++){
@@ -330,7 +351,7 @@ function gardenPixelPositions(n, W, H){
         const step = k === 1 ? 0 : span / (k - 1);
         center = k === 1 ? (xStart + xEnd)/2 : xStart + j * step;
       }
-      res[index++] = { left: Math.round(center - PLOT_W/2), baseY };
+      res[index++] = { left: Math.round(center - plotWidth/2), baseY };
     }
   }
   return res;
