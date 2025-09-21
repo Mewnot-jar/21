@@ -1,7 +1,7 @@
 // Configura aquí el título y el subtítulo
 const CONFIG = {
   title: 'Para mi mor',
-  subtitle: 'Un pequeño jardín lleno de recuerdos y cariño.',
+  subtitle: 'Un pequeño jardín lleno de cariño.',
   layout: 'garden' // opciones: 'garden' | 'heart' | 'circle' | 'grid'
 };
 
