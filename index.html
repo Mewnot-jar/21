@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Para mi mor</title>
+    <meta name="description" content="Un jardín de recuerdos para ti" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600;700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="bg"></div>
+
+    <header class="hero">
+      <h1 id="title">Para mi mor</h1>
+      <p id="subtitle">Un pequeño jardín lleno de recuerdos y cariño.</p>
+    </header>
+
+    <main>
+      <section id="garden" aria-label="Jardín de flores"></section>
+    </main>
+
+    <footer class="footer">
+      Hecho con 💖 para ti
+    </footer>
+
+    <!-- Modal Mensaje -->
+    <div id="message-modal" class="modal" aria-hidden="true" role="dialog" aria-modal="true">
+      <div class="modal__card">
+        <button class="modal__close" id="modal-close" aria-label="Cerrar">×</button>
+        <div class="modal__content">
+          <p id="modal-text"></p>
+        </div>
+      </div>
+    </div>
+
+    <script src="script.js" defer></script>
+  </body>
+  </html>
+
